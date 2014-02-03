@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="chrome=1" />
+	<title>Web Audio API</title>
+	<script type="text/javascript" src="http://viospiral.ergologic.gr/skin/frontend/default/theme493/js/jquery-1.7.min.js"></script>
+	<style>
+	.fft {
+	position: absolute;
+	-webkit-box-reflect: below 5px -webkit-linear-gradient(top, transparent, transparent 50%, rgba(255,255,255,0.2));
+	}
+	</style>
+<!--<script type="text/javascript" src="js/audiocont.js"></script>-->
+</head>
+<body>
+	<div id="myaudio"></div>
+	<ul id="playlist">
+		<li class="active">
+			<a href="sounds/Bolero.mp3">Ravel Bolero</a>
+		</li>
+		<li>
+			<a href="sounds/beethoven.mp3">Moonlight Sonata - Beethoven</a>
+		</li>
+		<li>
+			<a href="sounds/test.ogg">Sample sound</a>
+		</li>
+	</ul>
+	<section>
+		<div style="margin-top:150px;">
+		<div>
+			<canvas id="fft" class="fft" width="512" height="200"></canvas>
+			<!--<canvas id="fft2" class="fft" width="512" height="200"></canvas>-->
+		</div>
+		<h2 id="current-time"></h2>
+	</div>
+	</section>
+	<script>
+	(function() {
+		var canvas = document.getElementById('fft');
+		var ctx = canvas.getContext('2d');
+		canvas.width = document.body.clientWidth / 1.4;
+
+	/*var canvas2 = document.getElementById('fft2');
+	var ctx2 = canvas2.getContext('2d');
+	canvas2.width = canvas.width;*/
+
+		const CANVAS_HEIGHT = canvas.height;
+		const CANVAS_WIDTH = canvas.width;
+
+	    var audio = [];
+		audio[0] = new Audio();
+		audio[0].src = 'sounds/Bolero.mp3';
+		audio[0].controls = true;
+		//audio.loop = true;
+
+		var currenTimeNode = $('#current-time');
+		audio[0].addEventListener('timeupdate', function(e) {
+		  var currTime = audio[0].currentTime;
+		  currenTimeNode.textContent = parseInt(currTime / 60) + ':' + parseInt(currTime % 60);
+		}, false);
+
+		$('#myaudio').append(audio[0]);
+
+		// Check for non Web Audio API browsers.
+		if (!window.webkitAudioContext) {
+		  alert("Web Audio isn't available in your browser. But...you can still play the HTML5 audio :)");
+		  document.querySelector('#myaudio').classList.toggle('show');
+		  document.querySelector('aside').style.marginTop = '7em';
+		  return;
+		}
+
+		var context = new webkitAudioContext();
+		var analyser = context.createAnalyser();
+
+		function rafCallback(time) {
+		  window.webkitRequestAnimationFrame(rafCallback, canvas);
+
+		  var freqByteData = new Uint8Array(analyser.frequencyBinCount);
+		  //analyser.getByteFrequencyData(freqByteData); 
+		analyser.getByteTimeDomainData(freqByteData);
+
+		  var SPACER_WIDTH = 10;
+		  var BAR_WIDTH = 5;
+		  var OFFSET = 100;
+		  var CUTOFF = 23;
+		  var numBars = Math.round(CANVAS_WIDTH / SPACER_WIDTH);
+
+		  ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+		  ctx.fillStyle = '';
+		  ctx.lineCap = 'round';
+
+		  /*ctx2.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+		  ctx2.fillStyle = '#3A5E8C';
+		  ctx2.lineCap = 'round';*/
+
+		  // Draw rectangle for each frequency bin.
+		  /*for (var i = 0; i < numBars / 2 - CUTOFF; ++i) {
+		    var magnitude = freqByteData[i + OFFSET];
+		    ctx.fillRect(i * SPACER_WIDTH, CANVAS_HEIGHT, BAR_WIDTH, -magnitude);
+		  }
+		  for (var i = numBars / 2 + CUTOFF; i < numBars; ++i) {
+		    var magnitude = freqByteData[i + OFFSET];
+		    ctx2.fillRect(i * SPACER_WIDTH, CANVAS_HEIGHT, BAR_WIDTH, -magnitude);
+		  }*/
+		  for (var i = 0; i < numBars; ++i) {
+		    var magnitude = freqByteData[i + OFFSET];
+		    ctx.fillRect(i * SPACER_WIDTH, CANVAS_HEIGHT, BAR_WIDTH, -magnitude);
+		    //ctx2.fillRect(i * SPACER_WIDTH, CANVAS_HEIGHT, BAR_WIDTH, -magnitude);
+		}
+		var current = 0;
+	    playlist = $('#playlist');
+	    tracks = playlist.find('li a');
+	    len = tracks.length - 1;
+	    //audio[0].volume = 1.10;
+	    playlist.find('a').click(function(e){
+	        e.preventDefault();
+	        link = $(this);
+	        current = link.parent().index();
+	        run(link, audio[0]);
+	    });
+	    audio[0].addEventListener('ended', function(e){
+	        current++;
+	        if(current === len){
+	            current = 0;
+	            link = playlist.find('a')[0];
+	        }else{
+	            link = playlist.find('a')[current];    
+	        }
+	        run(link, audio[0]);
+	    });
+		}
+
+		function onLoad(e) {
+		  var source = context.createMediaElementSource(audio[0]);
+		  source.connect(analyser);
+		  analyser.connect(context.destination);
+		  rafCallback();
+		}
+
+		function run(link, player){
+	        player.src = link.attr('href');
+	        //par = link.parent();
+	        //par.addClass('active').siblings().removeClass('active');
+	        player.load();
+	        player.play();
+	}
+
+		// Need window.onload to fire first. See crbug.com/112368.
+		window.addEventListener('load', onLoad, false);
+	})();
+	</script>
+	<body>
+</html>

@@ -1,0 +1,40 @@
+body {
+  background: url("../images/line.png") center center repeat; }
+
+.fft {
+  position: absolute;
+  -webkit-box-reflect: below 5px -webkit-linear-gradient(top, transparent, transparent 50%, rgba(255, 255, 255, 0.2)); }
+
+.controllers ul li {
+  float: left;
+  margin-right: 1%;
+  list-style: none; }
+.controllers ul li:last-of-type:not(h5) {
+  width: 10%; }
+
+h5 {
+  text-align: center; }
+
+#current-time {
+  color: gray; }
+
+.navbar-default {
+  background-color: #3f3f3f;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(dimgrey), to(#3f3f3f));
+  background-image: -webkit-linear-gradient(top, dimgrey, #3f3f3f);
+  background-image: -moz-linear-gradient(top, dimgrey, #3f3f3f);
+  background-image: -ms-linear-gradient(top, dimgrey, #3f3f3f);
+  background-image: -o-linear-gradient(top, dimgrey, #3f3f3f);
+  background-image: linear-gradient(top, dimgrey, #3f3f3f);
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='dimgrey', EndColorStr='#3f3f3f'); }
+
+.navbar-brand {
+  color: white !important; }
+
+.nav.navbar-nav.navbar-left li a {
+  color: white; }
+  .nav.navbar-nav.navbar-left li a:hover {
+    color: gray; }
+
+input[type="radio"] {
+  margin-left: 20%; }

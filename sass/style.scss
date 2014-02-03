@@ -1,0 +1,54 @@
+@mixin gradient($from, $to) {
+  background-color: $to; 
+  background-image: -webkit-gradient(linear, left top, left bottom, from($from), to($to));
+  background-image: -webkit-linear-gradient(top, $from, $to); 
+  background-image:    -moz-linear-gradient(top, $from, $to); 
+  background-image:     -ms-linear-gradient(top, $from, $to); 
+  background-image:      -o-linear-gradient(top, $from, $to); 
+  background-image:         linear-gradient(top, $from, $to);
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr='#{$from}', EndColorStr='#{$to}');
+}
+body {
+	background: url('../images/line.png') center center repeat;
+}
+.fft {
+	position: absolute;
+	-webkit-box-reflect: below 5px -webkit-linear-gradient(top, transparent, transparent 50%, rgba(255,255,255,0.2));
+}
+.controllers {
+	ul {
+		li {
+			float: left;
+			margin-right: 1%;
+			list-style: none;
+		}
+		li:last-of-type:not(h5) {
+			width: 10%;
+		}
+	}
+}
+h5 {
+	text-align: center;
+}
+#current-time {
+	color: gray;
+}
+.navbar-default {
+	@include gradient(#696969, #3F3F3F);
+}
+.navbar-brand {
+	color: white !important;	
+}
+.nav.navbar-nav.navbar-left {
+	li {
+		a {
+			color: white;
+			&:hover {
+				color: gray;
+			}
+		}
+	}
+}
+input[type="radio"] {
+	margin-left: 20%;
+}
