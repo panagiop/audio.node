@@ -59,7 +59,7 @@ var analyser = context.createAnalyser(),
     highPassFilter = context.createBiquadFilter(),
     midFilter = context.createBiquadFilter(),
     lowPassFilter = context.createBiquadFilter(),
-    gainNode = context.createGainNode(),
+    gainNode = context.createGain(),
     convolver = context.createConvolver(),
     compressor = context.createDynamicsCompressor(),
     pan = context.createPanner();
@@ -179,7 +179,7 @@ function play() {
 
 function stop(){
   if(source) {
-    source.noteOff(source.currentTime);
+    source.stop(source.currentTime);
     source.disconnect(0);
   }
 }
