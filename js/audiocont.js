@@ -41,7 +41,8 @@ $(function(){
 var highPassFilter, reverb, soundSource, 
     soundBuffer, audioData, tempBuffer, 
     source, button, hue, 
-    refreshInter = 0, impulseResponseBuffer = [];
+    refreshInter = 0, impulseResponseBuffer = [],
+    startedAt, paused, pausedAt;
 
 // Array of implulse responses
 var SOUNDS = ['spring','muffler','echo','telephone'],
@@ -168,19 +169,28 @@ function fetchImpulseResponses(index) {
   }
 
 function play() {
-  var start = 0;
   source = context.createBufferSource(); 
   source.buffer = audioData; 
   source.loop = true; 
   source.connect(gainNode);
-  source.start(0); 
-  rafCallback();
+  
+  paused = false;
+
+  if (pausedAt) {
+    startedAt = Date.now() - pausedAt;
+    source.start(0, pausedAt / 1000);
+  } else {
+    startedAt = Date.now();
+    rafCallback();
+    source.start(0);
+  }
 }
 
 function stop(){
   if(source) {
-    source.stop(/*source.currentTime*/);
-    source.disconnect(0);
+    source.stop(0);
+    pausedAt = Date.now() - startedAt;
+    paused = true;
   }
 }
 
