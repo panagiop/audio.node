@@ -179,7 +179,7 @@ function play() {
 
 function stop(){
   if(source) {
-    source.stop(source.currentTime);
+    source.stop(/*source.currentTime*/);
     source.disconnect(0);
   }
 }
