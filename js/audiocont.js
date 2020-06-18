@@ -96,10 +96,6 @@ var buttons = document.querySelectorAll('button');
     buttons[1].disabled = true;
 
 function init(uploadedBuffer) {
-  if (!window.webkitAudioContext) {
-    alert("Web Audio isn't available in your browser :)");
-    return;
-  }
   context.decodeAudioData(uploadedBuffer, function(buffer) {
     audioData = buffer;
     buttons[0].disabled = false;
